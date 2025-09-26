@@ -7,6 +7,7 @@ using UnityEngine;
 public class Interaction : MonoBehaviour
 {
     Interactable detectedInteractable;
+    public float detectionDistance = 1.5f;
     
     // Start is called before the first frame update
     void Start()
@@ -18,9 +19,9 @@ public class Interaction : MonoBehaviour
     {
         // Find interactables
         Ray ray = Camera.main.ScreenPointToRay(new Vector3(Camera.main.pixelWidth*0.5f, Camera.main.pixelHeight*0.5f, 0.0f));
-        Debug.DrawLine(ray.origin, ray.origin+(ray.direction * 2.0f));
+        //Debug.DrawLine(ray.origin, ray.origin+(ray.direction * detectionDistance));
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 2.0f) && hit.transform.gameObject.CompareTag("Interactable"))
+        if (Physics.Raycast(ray, out hit, detectionDistance) && hit.transform.gameObject.CompareTag("Interactable"))
         {
             detectedInteractable = hit.transform.gameObject.GetComponent<Interactable>();
         }
@@ -38,7 +39,7 @@ public class Interaction : MonoBehaviour
             Debug.Log(detectedInteractable.GetInteractionPrompt());
 
             // Handle Keypress
-            if (Input.GetKey(KeyCode.F))
+            if (Input.GetKeyUp(KeyCode.F))
             {
                 detectedInteractable.Interact();
             }

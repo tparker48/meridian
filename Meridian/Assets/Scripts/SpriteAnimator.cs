@@ -53,8 +53,8 @@ public class SpriteAnimator : MonoBehaviour
         }
         else if (-135.0 <= angle && angle <= -45.0)
         {
-            transform.Rotate(0, 90, 0);
-            //GetComponent<SpriteRenderer>().flipX = true;
+            transform.Rotate(0, -90, 0);
+            GetComponent<SpriteRenderer>().flipX = true;
             return Face.Side;
         }
         else
