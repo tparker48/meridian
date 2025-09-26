@@ -4,12 +4,16 @@ using UnityEngine;
 
 public class FireBulletEvent : MonoBehaviour
 {
+    public float shotDistance;
+
     private Animator animator;
+    private LayerMask layerMask;
 
     // Start is called before the first frame update
     void Start()
     {
         animator = GetComponent<Animator>();
+        layerMask = LayerMask.GetMask("Hitbox");
     }
 
     // Update is called once per frame
@@ -24,13 +28,28 @@ public class FireBulletEvent : MonoBehaviour
 
         if (bullets > 0)
         {
-            Debug.Log($"Shot Fired! ({bullets-1} left)");
+            // fire
+            ShootBullet();
             animator.SetInteger("bullets", bullets - 1);
         }
         else
         {
-            Debug.Log("Click!");
+            // dry fire
         }
-        
+
+    }
+
+    private void ShootBullet()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(new Vector3(Camera.main.pixelWidth * 0.5f, Camera.main.pixelHeight * 0.5f, 0.0f));
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, shotDistance, layerMask))
+        {
+            ShootableEntity shotTarget = hit.transform.gameObject.GetComponentInParent<ShootableEntity>();
+            if (shotTarget != null)
+            {
+                shotTarget.OnRecieveShot();
+            }
+        }
     }
 }

@@ -1,9 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor.Animations;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.Animations;
 
 public enum AnimatorAction
 {
@@ -15,6 +11,9 @@ public class GenericSpriteAnimator : MonoBehaviour
 {
     private Animator animator;
     private AnimatorOverrideController animatorOverrideController;
+
+    public GameObject frontHitBox;
+    public GameObject sideHitBox;
 
     public List<AnimationClip> Idle;
     public List<AnimationClip> Walking;
@@ -40,6 +39,21 @@ public class GenericSpriteAnimator : MonoBehaviour
     void Update()
     {
         UpdateFace();
+
+        if (frontHitBox != null && sideHitBox != null)
+        {
+            if (face == Face.Front || face == Face.Back)
+            {
+                frontHitBox.SetActive(true);
+                sideHitBox.SetActive(false);
+            }
+            else
+            {
+                frontHitBox.SetActive(false);
+                sideHitBox.SetActive(true);
+            }            
+        }
+
         GetComponent<Animator>().SetInteger("face", (int)face);
         GetComponent<Animator>().SetInteger("action_id", (int)action);
     }
@@ -58,6 +72,11 @@ public class GenericSpriteAnimator : MonoBehaviour
 
         GetComponent<SpriteRenderer>().flipX = false;
 
+        if (sideHitBox != null)
+        {
+            sideHitBox.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        }
+        
         if (-45.0 <= angle && angle <= 45.0)
         {
             // Front
@@ -77,6 +96,10 @@ public class GenericSpriteAnimator : MonoBehaviour
             // Right
             transform.Rotate(0, -90, 0);
             GetComponent<SpriteRenderer>().flipX = true;
+            if (sideHitBox != null)
+            {
+                sideHitBox.transform.Rotate(0, 180, 0);
+            }
             face = Face.Side;
             return;
         }

@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -166,17 +167,16 @@ public class PlayerMovement : MonoBehaviour
         }
 
         muleObject = mountObj;
+        muleObject.SetActive(false);
 
         mounted = true;
         mountedThisFrame = true;
 
-        transform.Translate(0, mountHeightOffset, 0);
         controller.height += mountHeightOffset;
+        controller.Move(muleObject.transform.position - transform.position);
         transform.rotation = muleObject.transform.rotation;
         yaw = 0.0f;
         pitch = 0.0f;
-
-        muleObject.SetActive(false);
     }
     public void UnMount()
     {
@@ -187,16 +187,15 @@ public class PlayerMovement : MonoBehaviour
 
         mounted = false;
 
-
-        transform.Translate(0, -mountHeightOffset, 0);
         controller.height -= mountHeightOffset;
 
-        muleObject.transform.position = transform.position;
+        muleObject.transform.position = new Vector3(transform.position.x, muleObject.transform.position.y, transform.position.z);
         muleObject.transform.rotation = transform.rotation;
 
     
         transform.eulerAngles = new Vector3(0, Camera.main.transform.eulerAngles.y, 0);
         controller.Move(transform.forward * -1.5f);
+        controller.Move(transform.up * -mountHeightOffset);
         yaw = transform.eulerAngles.y;
         pitch = transform.eulerAngles.x;
 

@@ -1,42 +1,43 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using UnityEditor;
+using TMPro;
 using UnityEngine;
 
 public class Interaction : MonoBehaviour
 {
-    Interactable detectedInteractable;
     public float detectionDistance = 1.5f;
-    
+    public TextMeshProUGUI interactionMessageText;
+
+    private Interactable detectedInteractable;
+    private LayerMask layerMask;
+
     // Start is called before the first frame update
     void Start()
     {
+        layerMask = LayerMask.GetMask("Interaction");
     }
 
     // Update is called once per frame
     void Update()
     {
+        interactionMessageText.text = "";
+
         // Find interactables
         Ray ray = Camera.main.ScreenPointToRay(new Vector3(Camera.main.pixelWidth*0.5f, Camera.main.pixelHeight*0.5f, 0.0f));
-        //Debug.DrawLine(ray.origin, ray.origin+(ray.direction * detectionDistance));
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, detectionDistance) && hit.transform.gameObject.CompareTag("Interactable"))
-        {
-            detectedInteractable = hit.transform.gameObject.GetComponent<Interactable>();
-        }
-        else
-        {
-            detectedInteractable = null;
-        }
+        if (Physics.Raycast(ray, out hit, detectionDistance, layerMask))
+            {
+                detectedInteractable = hit.transform.gameObject.GetComponent<Interactable>();
+            }
+            else
+            {
+                detectedInteractable = null;
+            }
 
 
         // Respond to keypress
         if (detectedInteractable != null)
         {
             // Display Prompt
-            // ...
-            Debug.Log(detectedInteractable.GetInteractionPrompt());
+            interactionMessageText.text = $"[F] {detectedInteractable.GetInteractionPrompt()}";
 
             // Handle Keypress
             if (Input.GetKeyUp(KeyCode.F))
